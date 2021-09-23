@@ -15,11 +15,6 @@
         let msgLocation = document.getElementById('message')
         let socket = new WebSocket('ws://localhost:9999')
         
-        // 当连接成功之后就会执行回调函数
-        socket.onopen = function() {
-            console.log('服务器连接成功。')
-        }
-
         // 获得服务器发来的消息
         socket.onmessage = function(evt) {
             var received_msg = evt.data
@@ -39,7 +34,13 @@
             {'gameName':'maze10', 'xml':'<xml xmlns="https://developers.google.com/blockly/xml"><block type="maze_forever"><statement name="DO"><block type="maze_ifElse"><field name="DIR">isPathLeft</field><statement name="DO"><block type="maze_turn"><field name="DIR">turnLeft</field><next><block type="maze_moveForward"></block></next></block></statement><statement name="ELSE"><block type="maze_ifElse"><field name="DIR">isPathForward</field><statement name="DO"><block type="maze_moveForward"></block></statement><statement name="ELSE"><block type="maze_turn"><field name="DIR">turnRight</field></block></statement></block></statement></block></statement></block></xml>'},
         ];
         let game_data = {games}
-        socket.send(JSON.stringify(game_data))
+
+        // 检查当前连接状态，如果成功连接，就发送游戏数据
+        // 当连接成功之后就会执行回调函数
+        socket.onopen = function() {
+            console.log('服务器连接成功。')
+            socket.send(JSON.stringify(game_data))
+        }
         </script>
     </body>
 </html>
