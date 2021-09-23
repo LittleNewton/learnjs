@@ -27,16 +27,18 @@ webSocketServer.on('connection', function connection(ws) {
 
     // 监听对方发过来的 json
     ws.on('message', function incomming(message) {
-        var received_msg = JSON.parse(message)
-        console.log('============ NEW MESSAGE RECEIVED ============')
-        console.log('接收到客户端的消息')
-        console.log('已通关如下游戏：')
-        for (var i = 0; i < received_msg.games.length; i++) {
-            console.log('关卡名称：' + received_msg.games[i].gameName)
-            console.log('通关内容:' + received_msg.games[i].xml)
-            console.log("-----------------------NEW-----------------------")
+        var data = JSON.parse(message);
+        console.log('============ NEW MESSAGE RECEIVED ============');
+        console.log('接收到客户端的消息');
+
+        // TO DO : 以下所有的函数，都应该用 try 语句来写！否则服务端容易崩溃
+        // 如果有用户要登录
+        if (data.funcCode == 4) {
+            console.log("有用户要登录~");
+            if (data.username == 'newton' && data.password == '123456') {
+                data_respond = {'funcCode': 1}
+                ws.send(JSON.stringify(data_respond));
+            }
         }
-        let respond = {'status':'server 已经收到了你的消息~'}
-        ws.send(JSON.stringify(respond))
     })
 })

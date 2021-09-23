@@ -12,13 +12,30 @@
         <script>
 
         // 核心 js
-        let msgLocation = document.getElementById('message')
-        let socket = new WebSocket('ws://localhost:9999')
-        
-        // 获得服务器发来的消息
-        socket.onmessage = function(evt) {
-            var received_msg = evt.data
-            console.log(JSON.parse(received_msg))
+        let msgLocation = document.getElementById('message');
+        let socket = new WebSocket('ws://localhost:9999');
+
+        // 用户登录账号，funcCode == 4
+        function login(username, passwd) {
+            let data = {
+                'funcCode': 4,
+                'username': username,
+                'password': passwd,
+                'data_pack': ""
+            }
+            socket.send(JSON.stringify(data))
+
+            // TO BE DELETED check 输出
+            console.log(JSON.stringify(data))
+
+            socket.onmessage = function(evt) {
+                var data = JSON.parse(evt.data);
+                if (data.funcCode == 0) {
+                    console.log("登录失败");
+                } else if (data.funcCode == 1) {
+                    console.log("登录成功");
+                }
+            }
         }
 
         var games = [
@@ -35,11 +52,11 @@
         ];
         let game_data = {games}
 
-        // 检查当前连接状态，如果成功连接，就发送游戏数据
-        // 当连接成功之后就会执行回调函数
+
+        // 在集成到 HTML 之前，这就是测试模块
         socket.onopen = function() {
-            console.log('服务器连接成功。')
-            socket.send(JSON.stringify(game_data))
+            console.log('服务器连接成功。');
+            login("newton", '123456');
         }
         </script>
     </body>
