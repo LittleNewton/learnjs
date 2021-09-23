@@ -20,15 +20,23 @@ let WebSocketServer = require('ws').Server
 let webSocketServer = new WebSocketServer({ port: 9999 })
 // 监听客户端的连接请求  当客户端连接服务器的时候，就会触发connection事件
 
-// socket 代表一个客户端，每个连接进来的客户端都有一个 socket
-webSocketServer.on('connection', function(socket) {
+// ws (webSocket) 代表一个客户端，每个连接进来的客户端都有一个 ws
+webSocketServer.on('connection', function connection(ws) {
     // ROUTINE: 连接建立
     console.log('客户端连接成功')
 
-    // 监听对方发过来的消息
-    socket.on('message', function(message) {
-        x = decodeURI(message)
-        console.log('接收到客户端的消息：', x)
-        socket.send(x)
+    // 监听对方发过来的 json
+    ws.on('message', function incomming(message) {
+        var received_msg = JSON.parse(message)
+        console.log('============ NEW MESSAGE RECEIVED ============')
+        console.log('接收到客户端的消息')
+        console.log('已通关如下游戏：')
+        for (var i = 0; i < received_msg.games.length; i++) {
+            console.log('关卡名称：' + received_msg.games[i].gameName)
+            console.log('通关内容:' + received_msg.games[i].xml)
+            console.log("-----------------------NEW-----------------------")
+        }
+        let respond = {'status':'server 已经收到了你的消息~'}
+        ws.send(JSON.stringify(respond))
     })
 })
